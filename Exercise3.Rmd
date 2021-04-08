@@ -4,6 +4,7 @@ output: pdf_document
 ---
 
 ```{r, echo=FALSE, include=FALSE}
+#imports libraries
 library(ggplot2)
 library(tidyverse)
 library(knitr)
@@ -59,34 +60,37 @@ The next step is to use principal component analysis (PCA) as a means to fit a l
 ## III. Results
 
 ```{r, echo=FALSE}
-# Question 2 
+#imports data
 greenbuildings = read.csv('/Users/franklinstudent/Desktop/GitHub/Exercise3/greenbuildings.csv')
 
+#creates new variable annual_revenue_per_sqft and drops vairbales with missing info
 greenbuildings = greenbuildings %>%
   mutate(Annual_revenue_per_sqft = Rent*leasing_rate)%>%
   filter(green_rating == 1) %>%
   drop_na()
 
-
+#generates new data set with specified columns
 new_green = greenbuildings %>%
   select(1:4, 7:11, 15:24)
 
-
+#creates maxtrix and dependent variable
 X = as.matrix(new_green[,1:18])
 y = new_green[,19]
 
-
+#runs principal component analysis
 pc_greenbuildings = prcomp(X, scale=TRUE)
 greendata = pc_greenbuildings$x[,1:18]
 pcr1 = lm(y ~ greendata)
 ```
 
 ```{r, echo=FALSE}
+#summary of stats for model created
 summary(pcr1)
 ```
 
 
 ```{r, echo=FALSE}
+#plots model using data set
 plot(fitted(pcr1), y, ylab="Annual_revenue_per_sqft")
 title(main="Figure 1: Green Building Revenue", col.sub="blue")
 abline(b = 1, a = 0, col="red")
@@ -107,7 +111,7 @@ Based on the results presented, there appears to be a positive associated betwee
 # Question 3
 
 ## I. Overview 
-The objective is to analyze the provided data of residential housing in the state of California and develop a predictive model that could accurately determine the median house value based on several features. This model could be helpful in determining a pattern of median house values in the state. 
+The objective is to analyze the data set collected by the census tract for residential housing in the state of California, and develop a predictive model that could accurately determine the median house value based on several features. This model could be helpful in determining a pattern of median house values in the state. 
 
 
 
@@ -123,7 +127,7 @@ The next step is to train, test, split the original data set, which then provide
 
 
 ```{r, echo=FALSE}
-#Import data
+#Imports data
 housing = read.csv('/Users/franklinstudent/Desktop/GitHub/Exercise3/CAhousing.csv')
 
 #Averaged by households and standardized variables totalRooms and totalBedrooms
@@ -243,5 +247,5 @@ Figure 3 displays the residuals of the predictive model using the orginal data s
 
 ## IV. Conclusion
 
-Using feature selection as a means to develop a model has been proven to be successful in predicting median house values across the state of California. Median house prices are highest along the coast and lowest in the Central Valley, which were expected and derived the original data set. The out-of-sample accuracy for the model is consistently close to 67000.
+Using feature selection as a means to develop a model has been proven to be successful in predicting median house values across the state of California. Median house prices are highest along the coast and lowest in the Central Valley, which were expected and derived the original data set. The out-of-sample accuracy for the model is consistently close to 67000. Moreover, an obvious pattern to median house values has been detected and can be used for further analysis. 
 
