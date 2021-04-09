@@ -10,6 +10,7 @@ library(dplyr)
 library(data.table)
 library(ggrepel)
 library(ggmap)
+library(equatiomatic)
 
 
 # Question 1.1
@@ -115,18 +116,20 @@ lm0 = lm(medianHouseValue ~ 1, data = housing_train)
 lm_forward = step(lm0, direction = 'forward',
                   scope=~(longitude + latitude + housingMedianAge + 
                             totalRooms+ totalBedrooms + population + households + 
-                            medianIncome))
+                            medianIncome)^2)
 
 AIC(lm2)
 AIC(lm_forward)
 
-summary(lm2)
+coef(lm_forward)
 summary(lm_forward)
 
 getCall(lm_forward)
 
+mod1 <- lm_forward
+extract_eq(mod1)
 
-  
+
   
   
 
@@ -193,13 +196,15 @@ p <- ggmap(get_googlemap(center = c(lon =  -119.417931, lat = 36.778259),
 figure1 = p + geom_point(aes(x = longitude, y = latitude, color = medianHouseValue), 
                        data = housing, size = 0.5)+ xlab("Longitude") + ylab("Latitude") + ggtitle("Figure 1") +
   theme(plot.title = element_text(hjust = 0.5))
-   
 figure1
+
+
 
 figure2 = p + geom_point(aes(x = longitude, y = latitude, color = medianHouseValue), 
                        data = housing_test, size = 0.5) + xlab("Longitude") + ylab("Latitude") + ggtitle("Figure 2") +
   theme(plot.title = element_text(hjust = 0.5))
 figure2
+
 
 
 figure3 = p + geom_point(aes(x = longitude, y = latitude, color = resid), 
